@@ -14,17 +14,6 @@ instance Show ReadCount where
   show = unlines . map showCount . M.toList . unRC
     where showCount (l,n) = unwords [show n, show l]
 
-
-main :: IO ()
-main = getArgs >>=
-  mapM B.readFile >>=
-  mapM_ (print . fastqReadLengths)
-
--- | tally all read lengths, given FASTQ file contents
-fastqReadLengths :: B.ByteString -> ReadCount
-fastqReadLengths = RC . tally . map B.length . fastqReads
-  where fastqReads = every 4 . drop 1 . B.lines
-
 -- | tally occurrences
 tally :: (Num a, Ord k) => [k] -> M.Map k a
 tally xs = M.fromListWith (+) $ zip xs (repeat 1)
@@ -33,3 +22,15 @@ tally xs = M.fromListWith (+) $ zip xs (repeat 1)
 every :: Int -> [a] -> [a]
 every _ [] = []
 every n (x:xs) = x : every n (drop (n-1) xs)
+
+-- | tally all read lengths, given FASTQ file contents
+fastqReadLengths :: B.ByteString -> ReadCount
+fastqReadLengths = RC . tally . map B.length . fastqReads
+  where fastqReads = every 4 . drop 1 . B.lines
+
+
+-- | print read length tally for all given filenames
+main :: IO ()
+main = getArgs >>=
+  mapM B.readFile >>=
+  mapM_ (print . fastqReadLengths)
