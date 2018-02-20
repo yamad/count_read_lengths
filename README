@@ -1,0 +1,7 @@
+# Count FASTQ read lengths
+
+Each program in this repo solves the same problem: count the read lengths in a
+FASTQ file. The output is a list of lines, each indicating frequency of a read
+length for all read lengths found in the file.
+
+Several implementations are given, in several languages, mostly as an exercise.
